@@ -1,13 +1,276 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap');
+
+/* ── TOKENS ── */
+:root {
+  --cream:       #f5ead8;
+  --cream-dark:  #edd9b8;
+  --cream-light: #fdf6ec;
+  --brown:       #5c3317;
+  --brown-mid:   #8b5e3c;
+  --brown-light: #c49a6c;
+  --tan:         #e8c99a;
+  --tan-light:   #f0dfc0;
+  --warm-white:  #fefaf4;
+  --accent:      #d4874a;
+  --muted:       #b89070;
+
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   22px;
+  --radius-pill: 999px;
+
+  --shadow-card: 2px 3px 0px var(--brown-light);
+  --shadow-lift: 3px 5px 0px var(--brown-mid);
+
+  --font-display: 'Baloo 2', cursive;
+  --font-body:    'Nunito', sans-serif;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+/* ── RESET ── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
+* {
+  cursor: url('./assets/cursors/before-click.png'), auto;
+}
+
+a, button, [role="button"], input[type="checkbox"] {
+  cursor: url('./assets/cursors/before-click.png'), auto;
+}
+
+a:active, button:active, [role="button"]:active, input[type="checkbox"]:active {
+  cursor: url('./assets/cursors/after-click.png'), auto;
+}
+body {
+  background-color: var(--cream);
+  color: var(--brown);
+  font-family: var(--font-body);
+  min-height: 100vh;
+  padding-bottom: 60px;
+  /* subtle paper texture via repeating gradient */
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 28px,
+      rgba(140, 90, 50, 0.04) 28px,
+      rgba(140, 90, 50, 0.04) 29px
+    );
+}
+
+/* ── PAGE WRAPPER ── */
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+/* ── SHARED HEADER ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.page-header h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--brown);
+  line-height: 1.1;
+}
+
+.page-header .subtitle {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* ── BACK NAV ── */
+.back-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--brown-mid);
+  text-decoration: none;
+  margin-bottom: 20px;
+  padding: 6px 14px;
+  background: var(--tan-light);
+  border: 2px solid var(--tan);
+  border-radius: var(--radius-pill);
+  transition: background 0.15s, transform 0.1s;
+}
+.back-nav:hover {
+  background: var(--tan);
+  transform: translateX(-2px);
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--cream-light);
+  border: 2px solid var(--tan);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--brown);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── INPUT LINES ── */
+.line-input {
+  width: 100%;
+  border: none;
+  border-bottom: 1.5px dashed var(--brown-light);
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--brown);
+  padding: 5px 2px;
+  outline: none;
+  transition: border-color 0.2s;
+  display: block;
+  margin-bottom: 8px;
+}
+.line-input:focus { border-bottom-color: var(--accent); }
+.line-input::placeholder { color: var(--muted); opacity: 0.7; }
+
+.lined-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ���─ PILL LABEL ── */
+.pill-label {
+  display: inline-block;
+  background: var(--tan);
+  border: 1.5px solid var(--brown-light);
+  border-radius: var(--radius-pill);
+  padding: 3px 12px;
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--brown);
+  letter-spacing: 0.5px;
+}
+
+/* ── CHECKBOX ROW ── */
+.check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.check-row input[type="checkbox"] {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--brown-light);
+  border-radius: var(--radius-sm);
+  background: var(--cream-light);
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.check-row input[type="checkbox"]:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.check-row input[type="checkbox"]:checked::after {
+  content: '✓';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 10px;
+  color: white;
+  font-weight: bold;
+}
+
+.check-row .line-input {
+  margin-bottom: 0;
+}
+
+/* ── STAR RATING ── */
+.star-rating {
+  display: flex;
+  gap: 3px;
+}
+
+.star-rating .star {
+  font-size: 1.2rem;
+  color: var(--tan);
+  cursor: pointer;
+  transition: color 0.15s, transform 0.1s;
+  line-height: 1;
+}
+
+.star-rating .star:hover,
+.star-rating .star.filled {
+  color: var(--accent);
+  transform: scale(1.15);
+}
+
+/* ── SECTION DIVIDER ── */
+.section-divider {
+  border: none;
+  border-top: 2px dashed var(--tan);
+  margin: 18px 0;
+}
+
+/* ── CAFE ILLUSTRATION (SVG inline helpers) ── */
+.cafe-icon {
+  display: inline-block;
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+/* ── DECORATIVE DOTS ── */
+.dots::before {
+  content: '✦';
+  color: var(--accent);
+  margin-right: 6px;
+  font-size: 0.7rem;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up {
+  animation: fadeUp 0.35s ease both;
+}
+
+/* stagger children */
+.stagger > * { animation: fadeUp 0.3s ease both; }
+.stagger > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger > *:nth-child(2) { animation-delay: 0.10s; }
+.stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger > *:nth-child(4) { animation-delay: 0.20s; }
+.stagger > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger > *:nth-child(6) { animation-delay: 0.30s; }
+.stagger > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger > *:nth-child(8) { animation-delay: 0.40s; }
+.stagger > *:nth-child(9) { animation-delay: 0.45s; }
