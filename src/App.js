@@ -18,7 +18,9 @@ import StudyPlanner from './components/StudyPlanner';
 import MusicList from './components/MusicList';
 import DailyStory from './components/DailyStory';
 
-const API = 'http://localhost:8000/api/v1/planner';
+const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:8000';
+console.log('[frontend] API_BASE', API_BASE);
+const API = `${API_BASE}/api/v1/planner`;
 
 // Page card data for the home page
 const plannerPages = [
@@ -79,9 +81,16 @@ function Home() {
   const loadQuickTasks = async () => {
     try {
       const res = await fetch(`${API}/daily/tasks?date=${today}`);
+      if (!res.ok) {
+        const body = await res.text().catch(() => '');
+        console.error('[QuickTasks] backend error', res.status, body);
+        setQuickTasks([]);
+        return;
+      }
       const data = await res.json();
       setQuickTasks(data.slice(0, 5)); // Only show first 5 tasks
     } catch (e) {
+      console.error('[QuickTasks] fetch failed', e);
       setQuickTasks([]);
     }
   };
