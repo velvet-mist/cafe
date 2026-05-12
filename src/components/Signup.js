@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from '../react-router-dom';
 
 import { setToken } from '../auth';
+import cherriImg from '../assets/illustration/i-cherr-ish.png';
 
 const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:8000';
 
@@ -47,49 +48,73 @@ export default function Signup() {
   }
 
   return (
-    <div className="App" style={{ maxWidth: 420, margin: '40px auto', padding: 16 }}>
-      <h2 style={{ marginBottom: 8 }}>Create account</h2>
-      <p style={{ marginTop: 0, opacity: 0.8 }}>Pick a username + password (no email needed).</p>
+    <div className="auth-page">
+      <Link className="auth-home" to="/">← back home</Link>
 
-      <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <input
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="username"
-          autoComplete="username"
-          required
-          minLength={3}
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="password"
-          autoComplete="new-password"
-          required
-          minLength={6}
-        />
-        <input
-          type="password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          placeholder="confirm password"
-          autoComplete="new-password"
-          required
-          minLength={6}
-        />
+      <div className="auth-panel">
+        <section className="auth-visual" aria-hidden="true">
+          <div className="auth-tag">new table</div>
+          <img src={cherriImg} alt="" />
+        </section>
 
-        {error ? <div style={{ color: 'crimson' }}>{error}</div> : null}
+        <section className="auth-card">
+          <div className="auth-heading">
+            <span className="auth-kicker">cafe to-do</span>
+            <h1>Create account</h1>
+            <p>No email needed, just a username and password.</p>
+          </div>
 
-        <button disabled={loading} type="submit" style={{ padding: 10, cursor: loading ? 'not-allowed' : 'pointer' }}>
-          {loading ? 'Creating...' : 'Sign up'}
-        </button>
-      </form>
+          <form className="auth-form" onSubmit={onSubmit}>
+            <label>
+              Username
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="choose a username"
+                autoComplete="username"
+                required
+                minLength={3}
+              />
+            </label>
 
-      <div style={{ marginTop: 14, opacity: 0.85 }}>
-        Already have an account? <Link to="/login">Log in</Link>
+            <label>
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="at least 6 characters"
+                autoComplete="new-password"
+                required
+                minLength={6}
+              />
+            </label>
+
+            <label>
+              Confirm password
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="type it once more"
+                autoComplete="new-password"
+                required
+                minLength={6}
+              />
+            </label>
+
+            {error ? <div className="auth-error">{error}</div> : null}
+
+            <button className="auth-submit" disabled={loading} type="submit">
+              {loading ? 'Creating...' : 'Sign up'}
+            </button>
+          </form>
+
+          <p className="auth-switch">
+            Already have an account? <Link to="/login">Log in</Link>
+          </p>
+        </section>
       </div>
     </div>
   );
 }
-

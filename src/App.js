@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
-// NOTE: Jest/test environment in this repo has trouble resolving react-router-dom.
-// Using a local lightweight fallback avoids unit-test crashes without affecting the real app.
-import { BrowserRouter as Router, Routes, Route } from './react-router-dom';
+// Local lightweight router keeps tests stable and renders one route at a time.
+import { BrowserRouter as Router, Routes, Route, Link } from './react-router-dom';
 
 
 import './App.css';
@@ -65,7 +64,7 @@ const plannerPages = [
     name: 'Travel Wishlist',
     description: 'Places to visit and activities to do someday.',
     image: iceBearImg,
-    href: 'pages/travel.html',
+    href: '/story',
   },
   {
     id: 6,
@@ -80,7 +79,20 @@ const plannerPages = [
 function Home() {
   const [quickTasks, setQuickTasks] = useState([]);
   const [newTask, setNewTask] = useState('');
+  const [wheelRotation, setWheelRotation] = useState(0);
+  const [selectedQuickTask, setSelectedQuickTask] = useState(null);
+  const [isSpinning, setIsSpinning] = useState(false);
   const today = new Date().toISOString().split('T')[0];
+  const wheelColors = ['#d4874a', '#6f8566', '#c49a6c', '#8b5e3c', '#e8c99a'];
+  const wheelTasks = quickTasks.filter(t => !t.done);
+  const sliceSize = wheelTasks.length ? 360 / wheelTasks.length : 360;
+  const wheelGradient = wheelTasks.length
+    ? `conic-gradient(${wheelTasks.map((task, index) => {
+        const start = index * sliceSize;
+        const end = start + sliceSize;
+        return `${wheelColors[index % wheelColors.length]} ${start}deg ${end}deg`;
+      }).join(', ')})`
+    : 'conic-gradient(var(--tan-light), var(--cream-light))';
 
   useEffect(() => {
     loadQuickTasks();
@@ -120,12 +132,36 @@ function Home() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ done })
     });
+    if (selectedQuickTask?.id === id && done) {
+      setSelectedQuickTask(null);
+    }
     loadQuickTasks();
   };
 
   const deleteQuickTask = async (id) => {
     await fetch(`${API}/daily/tasks/${id}`, { method: 'DELETE' });
+    if (selectedQuickTask?.id === id) {
+      setSelectedQuickTask(null);
+    }
     loadQuickTasks();
+  };
+
+  const spinQuickWheel = () => {
+    if (wheelTasks.length === 0 || isSpinning) return;
+
+    const selectedIndex = Math.floor(Math.random() * wheelTasks.length);
+    const selectedSliceCenter = (selectedIndex * sliceSize) + (sliceSize / 2);
+    const rounds = 4 + Math.floor(Math.random() * 3);
+    const nextRotation = wheelRotation + (rounds * 360) + (360 - selectedSliceCenter);
+
+    setIsSpinning(true);
+    setSelectedQuickTask(null);
+    setWheelRotation(nextRotation);
+
+    window.setTimeout(() => {
+      setSelectedQuickTask(wheelTasks[selectedIndex]);
+      setIsSpinning(false);
+    }, 1400);
   };
 
   const completedCount = quickTasks.filter(t => t.done).length;
@@ -134,9 +170,21 @@ function Home() {
 
   return (
     <div className="App">
+      <header className="home-topbar">
+        <Link className="brand-mark" to="/">
+          <span>cafe to-do</span>
+        </Link>
+        <nav className="home-nav" aria-label="Primary">
+          <Link to="/daily">Daily</Link>
+          <Link to="/yearly">Yearly</Link>
+          <Link to="/study">Study</Link>
+          <Link className="nav-login" to="/login">Log in</Link>
+        </nav>
+      </header>
+
       {/* HERO SECTION */}
       <div className="hero fade-up">
-        <div className="hero-tag">☕ my cozy corner</div>
+        <div className="hero-tag">my cozy corner</div>
         <h1>
           My <span>Planner</span>
         </h1>
@@ -163,7 +211,10 @@ function Home() {
           </div>
         </div>
         <div className="quick-todo-list">
-          <div className="quick-todo-header">Today's Quick Tasks</div>
+          <div className="quick-todo-header">
+            <span>Today's Quick Tasks</span>
+            <Link to="/daily">Open daily planner</Link>
+          </div>
           <div className="quick-todo-input">
             <input
               type="text"
@@ -192,23 +243,49 @@ function Home() {
             )}
           </ul>
         </div>
+        <div className="quick-wheel-card">
+          <div className="quick-wheel-title">pick one</div>
+          <div className="wheel-wrap mini-wheel-wrap">
+            <div className="wheel-pointer" aria-hidden="true"></div>
+            <div
+              className="todo-wheel mini-wheel"
+              style={{
+                background: wheelGradient,
+                transform: `rotate(${wheelRotation}deg)`,
+              }}
+              aria-hidden="true"
+            >
+              <div className="wheel-center mini-wheel-center">go</div>
+            </div>
+          </div>
+          <button
+            className="quick-wheel-btn"
+            onClick={spinQuickWheel}
+            disabled={isSpinning || wheelTasks.length === 0}
+          >
+            {isSpinning ? '...' : 'spin'}
+          </button>
+          <div className="quick-wheel-result">
+            {selectedQuickTask ? selectedQuickTask.text : 'next task'}
+          </div>
+        </div>
       </div>
 
       {/* PAGE CARDS GRID */}
       <div className="planner-grid stagger">
         {plannerPages.map((page) => (
-          <a key={page.id} className="page-card" href={page.href}>
+          <Link key={page.id} className="page-card" to={page.href}>
             <img className="card-icon" src={page.image} alt={page.name} />
             <div className="card-name">{page.name}</div>
             <div className="card-desc">{page.description}</div>
             <span className="card-arrow">→</span>
-          </a>
+          </Link>
         ))}
       </div>
 
       {/* FOOTER */}
       <footer className="site-footer">
-        <span className="hearts">♡ ☕ ♡</span>
+        <span className="hearts">♡ cafe ♡</span>
         make every day a cozy one
       </footer>
     </div>

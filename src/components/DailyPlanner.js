@@ -13,10 +13,23 @@ function DailyPlanner() {
   const [notes, setNotes] = useState('');
   const [newTask, setNewTask] = useState('');
   const [schedule, setSchedule] = useState({});
+  const [wheelRotation, setWheelRotation] = useState(0);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [isSpinning, setIsSpinning] = useState(false);
 
   const timeSlots = [
     '7am', '8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm'
   ];
+  const wheelColors = ['#d4874a', '#6f8566', '#c49a6c', '#8b5e3c', '#e8c99a', '#b89070'];
+  const wheelTasks = tasks.filter(t => !t.done);
+  const sliceSize = wheelTasks.length ? 360 / wheelTasks.length : 360;
+  const wheelGradient = wheelTasks.length
+    ? `conic-gradient(${wheelTasks.map((task, index) => {
+        const start = index * sliceSize;
+        const end = start + sliceSize;
+        return `${wheelColors[index % wheelColors.length]} ${start}deg ${end}deg`;
+      }).join(', ')})`
+    : 'conic-gradient(var(--tan-light), var(--cream-light))';
 
   useEffect(() => {
     loadDay();
@@ -77,6 +90,9 @@ function DailyPlanner() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ done })
     });
+    if (selectedTask?.id === id && done) {
+      setSelectedTask(null);
+    }
     loadTasks();
   };
 
@@ -105,6 +121,29 @@ function DailyPlanner() {
 
   const handleScheduleChange = (hour, value) => {
     setSchedule(prev => ({ ...prev, [hour]: value }));
+  };
+
+  const spinWheel = () => {
+    if (wheelTasks.length === 0 || isSpinning) return;
+
+    const selectedIndex = Math.floor(Math.random() * wheelTasks.length);
+    const selectedSliceCenter = (selectedIndex * sliceSize) + (sliceSize / 2);
+    const rounds = 5 + Math.floor(Math.random() * 3);
+    const nextRotation = wheelRotation + (rounds * 360) + (360 - selectedSliceCenter);
+
+    setIsSpinning(true);
+    setSelectedTask(null);
+    setWheelRotation(nextRotation);
+
+    window.setTimeout(() => {
+      setSelectedTask(wheelTasks[selectedIndex]);
+      setIsSpinning(false);
+    }, 1800);
+  };
+
+  const markSelectedDone = () => {
+    if (!selectedTask) return;
+    toggleTask(selectedTask.id, true);
   };
 
   return (
@@ -158,6 +197,43 @@ function DailyPlanner() {
               ))
             )}
           </ul>
+        </div>
+
+        <div className="card todo-wheel-card">
+          <div className="card-title dots">to-do wheel</div>
+          <div className="wheel-wrap">
+            <div className="wheel-pointer" aria-hidden="true"></div>
+            <div
+              className="todo-wheel"
+              style={{
+                background: wheelGradient,
+                transform: `rotate(${wheelRotation}deg)`,
+              }}
+              aria-hidden="true"
+            >
+              <div className="wheel-center">spin</div>
+            </div>
+          </div>
+
+          <button
+            className="btn wheel-spin-btn"
+            onClick={spinWheel}
+            disabled={isSpinning || wheelTasks.length === 0}
+          >
+            {isSpinning ? 'spinning...' : 'spin the wheel'}
+          </button>
+
+          <div className="wheel-result">
+            {selectedTask ? (
+              <>
+                <span className="wheel-result-label">do this next</span>
+                <strong>{selectedTask.text}</strong>
+                <button className="btn btn-ghost" onClick={markSelectedDone}>mark done</button>
+              </>
+            ) : (
+              <span>{wheelTasks.length ? 'add tasks, then let the wheel pick one' : 'no unfinished tasks to spin'}</span>
+            )}
+          </div>
         </div>
 
         <div className="card">

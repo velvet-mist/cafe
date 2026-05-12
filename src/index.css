@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&family=Nunito:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300..900&family=Jura:wght@300..700&family=Quattrocento:wght@400;700&display=swap');
 
 /* ── TOKENS ── */
 :root {
@@ -22,8 +22,9 @@
   --shadow-card: 2px 3px 0px var(--brown-light);
   --shadow-lift: 3px 5px 0px var(--brown-mid);
 
-  --font-display: 'Baloo 2', cursive;
-  --font-body:    'Nunito', sans-serif;
+  --font-display: 'Quattrocento', serif;
+  --font-body:    'Hanken Grotesk', sans-serif;
+  --font-accent:  'Jura', sans-serif;
 }
 
 /* ── RESET ── */

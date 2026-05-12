@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from '../react-router-dom';
 
 import { setToken } from '../auth';
+import aestheticImg from '../assets/illustration/aesthetic.png';
 
 const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:8000';
 
@@ -41,36 +42,58 @@ export default function Login() {
   }
 
   return (
-    <div className="App" style={{ maxWidth: 420, margin: '40px auto', padding: 16 }}>
-      <h2 style={{ marginBottom: 8 }}>Log in</h2>
-      <p style={{ marginTop: 0, opacity: 0.8 }}>Use your username + password.</p>
+    <div className="auth-page">
+      <Link className="auth-home" to="/">← back home</Link>
 
-      <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        <input
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="username"
-          autoComplete="username"
-          required
-        />
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="password"
-          autoComplete="current-password"
-          required
-        />
-        {error ? <div style={{ color: 'crimson' }}>{error}</div> : null}
-        <button disabled={loading} type="submit" style={{ padding: 10, cursor: loading ? 'not-allowed' : 'pointer' }}>
-          {loading ? 'Logging in...' : 'Log in'}
-        </button>
-      </form>
+      <div className="auth-panel">
+        <section className="auth-visual" aria-hidden="true">
+          <div className="auth-tag">welcome back</div>
+          <img src={aestheticImg} alt="" />
+        </section>
 
-      <div style={{ marginTop: 14, opacity: 0.85 }}>
-        No account? <Link to="/signup">Sign up</Link>
+        <section className="auth-card">
+          <div className="auth-heading">
+            <span className="auth-kicker">cafe to-do</span>
+            <h1>Log in</h1>
+            <p>Pick up where you left off.</p>
+          </div>
+
+          <form className="auth-form" onSubmit={onSubmit}>
+            <label>
+              Username
+              <input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="your username"
+                autoComplete="username"
+                required
+              />
+            </label>
+
+            <label>
+              Password
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="your password"
+                autoComplete="current-password"
+                required
+              />
+            </label>
+
+            {error ? <div className="auth-error">{error}</div> : null}
+
+            <button className="auth-submit" disabled={loading} type="submit">
+              {loading ? 'Logging in...' : 'Log in'}
+            </button>
+          </form>
+
+          <p className="auth-switch">
+            No account? <Link to="/signup">Sign up</Link>
+          </p>
+        </section>
       </div>
     </div>
   );
 }
-
