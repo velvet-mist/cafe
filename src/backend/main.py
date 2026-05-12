@@ -4,11 +4,14 @@ from app.routers import todos, planner
 from app.database import engine
 from app.models.todo import Base as TodoBase
 from app.models.planner import Base as PlannerBase
+from app.models.user import User
 
 TodoBase.metadata.create_all(bind=engine)
 PlannerBase.metadata.create_all(bind=engine)
+User.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Todo API", version="1.0.0")
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -17,8 +20,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+from app.routers import auth
+
 app.include_router(todos.router, prefix="/api/v1")
 app.include_router(planner.router, prefix="/api/v1")
+app.include_router(auth.router, prefix="/api/v1")
+
 
 @app.get("/")
 def root():

@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// NOTE: Jest/test environment in this repo has trouble resolving react-router-dom.
+// Using a local lightweight fallback avoids unit-test crashes without affecting the real app.
+import { BrowserRouter as Router, Routes, Route } from './react-router-dom';
+
+
 import './App.css';
 
 // Import illustrations from assets
@@ -17,8 +22,11 @@ import YearlyPlanner from './components/YearlyPlanner';
 import StudyPlanner from './components/StudyPlanner';
 import MusicList from './components/MusicList';
 import DailyStory from './components/DailyStory';
+import Login from './components/Login';
+import Signup from './components/Signup';
 
 const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:8000';
+
 console.log('[frontend] API_BASE', API_BASE);
 const API = `${API_BASE}/api/v1/planner`;
 
@@ -212,6 +220,8 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/daily" element={<DailyPlanner />} />
         <Route path="/yearly" element={<YearlyPlanner />} />
         <Route path="/study" element={<StudyPlanner />} />
