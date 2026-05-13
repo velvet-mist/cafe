@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from '../react-router-dom';
 
 
@@ -13,11 +13,7 @@ function YearlyPlanner() {
   const [markedSet, setMarkedSet] = useState(new Set());
   const today = new Date();
 
-  useEffect(() => {
-    loadMarkedDays();
-  }, [currentYear]);
-
-  const loadMarkedDays = async () => {
+  const loadMarkedDays = useCallback(async () => {
     try {
       const res = await fetch(`${API}/yearly?year=${currentYear}`);
       const data = await res.json();
@@ -25,7 +21,11 @@ function YearlyPlanner() {
     } catch (e) {
       setMarkedSet(new Set());
     }
-  };
+  }, [currentYear]);
+
+  useEffect(() => {
+    loadMarkedDays();
+  }, [loadMarkedDays]);
 
   const changeYear = async (delta) => {
     setCurrentYear(prev => prev + delta);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 // Local lightweight router keeps tests stable and renders one route at a time.
 import { BrowserRouter as Router, Routes, Route, Link } from './react-router-dom';
@@ -94,11 +94,7 @@ function Home() {
       }).join(', ')})`
     : 'conic-gradient(var(--tan-light), var(--cream-light))';
 
-  useEffect(() => {
-    loadQuickTasks();
-  }, []);
-
-  const loadQuickTasks = async () => {
+  const loadQuickTasks = useCallback(async () => {
     try {
       const res = await fetch(`${API}/daily/tasks?date=${today}`);
       if (!res.ok) {
@@ -113,7 +109,11 @@ function Home() {
       console.error('[QuickTasks] fetch failed', e);
       setQuickTasks([]);
     }
-  };
+  }, [today]);
+
+  useEffect(() => {
+    loadQuickTasks();
+  }, [loadQuickTasks]);
 
   const addQuickTask = async () => {
     if (!newTask.trim()) return;

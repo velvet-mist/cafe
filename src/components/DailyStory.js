@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from '../react-router-dom';
 
 const API_BASE = process.env.REACT_APP_API_BASE || 'http://localhost:8000';
@@ -20,11 +20,7 @@ function DailyStory() {
   const [wordCount, setWordCount] = useState(0);
   const [status, setStatus] = useState(false);
 
-  useEffect(() => {
-    loadEntry();
-  }, [date]);
-
-  const loadEntry = async () => {
+  const loadEntry = useCallback(async () => {
     try {
       const res = await fetch(`${API}/story?date=${date}`);
       if (res.ok) {
@@ -45,7 +41,11 @@ function DailyStory() {
       setMood('');
       setWordCount(0);
     }
-  };
+  }, [date]);
+
+  useEffect(() => {
+    loadEntry();
+  }, [loadEntry]);
 
   const setMoodByBtn = (moodLabel) => {
     setMood(moodLabel);

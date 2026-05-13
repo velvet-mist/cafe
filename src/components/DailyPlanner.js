@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from '../react-router-dom';
 
 
@@ -31,15 +31,7 @@ function DailyPlanner() {
       }).join(', ')})`
     : 'conic-gradient(var(--tan-light), var(--cream-light))';
 
-  useEffect(() => {
-    loadDay();
-  }, [date]);
-
-  const loadDay = async () => {
-    await Promise.all([loadTasks(), loadNotes(), loadSchedule()]);
-  };
-
-  const loadTasks = async () => {
+  const loadTasks = useCallback(async () => {
     try {
       const res = await fetch(`${API}/daily/tasks?date=${date}`);
       const data = await res.json();
@@ -47,9 +39,9 @@ function DailyPlanner() {
     } catch (e) {
       setTasks([]);
     }
-  };
+  }, [date]);
 
-  const loadNotes = async () => {
+  const loadNotes = useCallback(async () => {
     try {
       const res = await fetch(`${API}/daily/notes?date=${date}`);
       if (res.ok) {
@@ -59,9 +51,9 @@ function DailyPlanner() {
     } catch (e) {
       setNotes('');
     }
-  };
+  }, [date]);
 
-  const loadSchedule = async () => {
+  const loadSchedule = useCallback(async () => {
     try {
       const res = await fetch(`${API}/daily/schedule?date=${date}`);
       const data = await res.json();
@@ -71,7 +63,15 @@ function DailyPlanner() {
     } catch (e) {
       setSchedule({});
     }
-  };
+  }, [date]);
+
+  const loadDay = useCallback(async () => {
+    await Promise.all([loadTasks(), loadNotes(), loadSchedule()]);
+  }, [loadTasks, loadNotes, loadSchedule]);
+
+  useEffect(() => {
+    loadDay();
+  }, [loadDay]);
 
   const addTask = async () => {
     if (!newTask.trim()) return;

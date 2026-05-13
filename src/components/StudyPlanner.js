@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from '../react-router-dom';
 
 
@@ -14,15 +14,7 @@ function StudyPlanner() {
   const [studyNotes, setStudyNotes] = useState('');
   const [schedule, setSchedule] = useState({});
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    await Promise.all([loadAssignments(), loadSchedule(), loadNotes()]);
-  };
-
-  const loadAssignments = async () => {
+  const loadAssignments = useCallback(async () => {
     try {
       const res = await fetch(`${API}/study/assignments`);
       const data = await res.json();
@@ -30,9 +22,9 @@ function StudyPlanner() {
     } catch (e) {
       setAssignments([]);
     }
-  };
+  }, []);
 
-  const loadSchedule = async () => {
+  const loadSchedule = useCallback(async () => {
     try {
       const res = await fetch(`${API}/study/schedule`);
       const data = await res.json();
@@ -42,9 +34,9 @@ function StudyPlanner() {
     } catch (e) {
       setSchedule({});
     }
-  };
+  }, []);
 
-  const loadNotes = async () => {
+  const loadNotes = useCallback(async () => {
     try {
       const res = await fetch(`${API}/study/notes`);
       if (res.ok) {
@@ -54,7 +46,15 @@ function StudyPlanner() {
     } catch (e) {
       setStudyNotes('');
     }
-  };
+  }, []);
+
+  const loadData = useCallback(async () => {
+    await Promise.all([loadAssignments(), loadSchedule(), loadNotes()]);
+  }, [loadAssignments, loadSchedule, loadNotes]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   const addAssignment = async () => {
     if (!newAssignment.trim()) return;

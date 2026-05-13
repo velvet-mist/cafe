@@ -31,11 +31,6 @@ function MusicList() {
     return match ? match[1] : null;
   };
 
-  const clearError = () => {
-    setError('');
-    setLinkInput(prev => prev);
-  };
-
   const fetchTrackMeta = async (trackId) => {
     try {
       const url = `https://open.spotify.com/track/${trackId}`;
@@ -146,6 +141,7 @@ function MusicList() {
                     <div className={`embed-wrap ${openEmbeds[s.id] ? 'open' : ''}`}>
                       <iframe
                         src={`https://open.spotify.com/embed/track/${trackId}?utm_source=generator`}
+                        title={`Spotify player for ${s.title}`}
                         allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                         loading="lazy"
                       />
