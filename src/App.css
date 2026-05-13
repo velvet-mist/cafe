@@ -499,6 +499,19 @@
   align-items: start;
 }
 
+.daily-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 16px;
+  align-items: start;
+}
+
+.daily-work-column {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 .task-input-row {
   display: flex;
   gap: 8px;
@@ -617,6 +630,8 @@
   flex-direction: column;
   align-items: center;
   gap: 14px;
+  position: sticky;
+  top: 18px;
 }
 
 .wheel-wrap {
@@ -766,8 +781,13 @@
 }
 
 @media (max-width: 760px) {
-  .two-col {
+  .two-col,
+  .daily-main-grid {
     grid-template-columns: 1fr;
+  }
+
+  .todo-wheel-card {
+    position: static;
   }
 }
 

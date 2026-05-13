@@ -165,41 +165,58 @@ function DailyPlanner() {
         />
       </div>
 
-      <div className="two-col">
-        <div className="card">
-          <div className="card-title dots">tasks</div>
-          <div className="task-input-row">
-            <input
-              type="text"
-              placeholder="add a task..."
-              value={newTask}
-              onChange={(e) => setNewTask(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && addTask()}
-            />
-            <button className="add-btn" onClick={addTask}>+</button>
-          </div>
-          <ul className="task-list">
-            {tasks.length === 0 ? (
-              <li style={{ color: 'var(--muted)', fontSize: '0.8rem', textAlign: 'center', padding: '12px' }}>
-                no tasks yet
-              </li>
-            ) : (
-              tasks.map(t => (
-                <li key={t.id} className={`task-item ${t.done ? ' done' : ''}`}>
-                  <input
-                    type="checkbox"
-                    checked={t.done}
-                    onChange={() => toggleTask(t.id, !t.done)}
-                  />
-                  <span>{t.text}</span>
-                  <button className="del" onClick={() => deleteTask(t.id)}>✕</button>
+      <div className="daily-main-grid">
+        <div className="daily-work-column">
+          <div className="card">
+            <div className="card-title dots">tasks</div>
+            <div className="task-input-row">
+              <input
+                type="text"
+                placeholder="add a task..."
+                value={newTask}
+                onChange={(e) => setNewTask(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && addTask()}
+              />
+              <button className="add-btn" onClick={addTask}>+</button>
+            </div>
+            <ul className="task-list">
+              {tasks.length === 0 ? (
+                <li style={{ color: 'var(--muted)', fontSize: '0.8rem', textAlign: 'center', padding: '12px' }}>
+                  no tasks yet
                 </li>
-              ))
-            )}
-          </ul>
+              ) : (
+                tasks.map(t => (
+                  <li key={t.id} className={`task-item ${t.done ? ' done' : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={t.done}
+                      onChange={() => toggleTask(t.id, !t.done)}
+                    />
+                    <span>{t.text}</span>
+                    <button className="del" onClick={() => deleteTask(t.id)}>✕</button>
+                  </li>
+                ))
+              )}
+            </ul>
+          </div>
+
+          <div className="card">
+            <div className="card-title dots">notes</div>
+            <div className="notes-block" style={{ minHeight: '180px' }}>
+              <textarea
+                id="notes-textarea"
+                placeholder="jot anything down..."
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+              />
+            </div>
+            <div className="save-bar">
+              <button className="btn" onClick={saveNotes}>save notes</button>
+            </div>
+          </div>
         </div>
 
-        <div className="card todo-wheel-card">
+        <aside className="card todo-wheel-card">
           <div className="card-title dots">to-do wheel</div>
           <div className="wheel-wrap">
             <div className="wheel-pointer" aria-hidden="true"></div>
@@ -234,22 +251,7 @@ function DailyPlanner() {
               <span>{wheelTasks.length ? 'add tasks, then let the wheel pick one' : 'no unfinished tasks to spin'}</span>
             )}
           </div>
-        </div>
-
-        <div className="card">
-          <div className="card-title dots">notes</div>
-          <div className="notes-block" style={{ minHeight: '180px' }}>
-            <textarea
-              id="notes-textarea"
-              placeholder="jot anything down..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </div>
-          <div className="save-bar">
-            <button className="btn" onClick={saveNotes}>save notes</button>
-          </div>
-        </div>
+        </aside>
       </div>
 
       <div style={{ marginTop: '16px' }}>
